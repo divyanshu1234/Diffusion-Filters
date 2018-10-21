@@ -1,10 +1,11 @@
-function u = eedfinal(u, timeStep, nIter, verbose, sigma)
-% Edge Enhanhancing Diffusion 
-% u        - Image
-% timeStep - delta t
-% nIter    - Number of Iterations
-% verbose  - Figure number
-% sigma    - Standard Deviation for Gaussian Kernel
+function u = eedfinal(u, timeStep, nIter, verbose, sigma, m, km, cm)
+% Edge Enhancing Diffusion 
+% u         - Image
+% timeStep  - delta t
+% nIter     - Number of Iterations
+% verbose   - Figure number
+% sigma     - For Gaussian Kernel kSigma
+% m, km, cm - To calculate lamda
 
 if verbose
     figure(verbose);
@@ -45,7 +46,7 @@ for iter = 1:nIter
             v2 = guSigmaPerp / norm(guSigma);
             
             s = norm(guSigma)^2;
-            lamb1 = 1 - exp(-3.3148 ./ (s/0.007).^4);
+            lamb1 = 1 - exp(-cm ./ (s/km).^m);
             lamb2 = 1;
             
             D = [v1, v2] * diag([lamb1, lamb2]) * [v1'; v2'];

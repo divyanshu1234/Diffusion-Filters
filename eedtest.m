@@ -10,4 +10,5 @@ imgNoise = imnoise(img,'gaussia',0.01); % adding Gaussian noise of mean zero and
 timeStep = 0.2; % timestep size used in numerical approximation
 nIter = 120; % number of iterations 
 
-b = eedfinal(imgNoise, timeStep, nIter, 1, 0.2); 
+imgFiltered = eedfinal(imgNoise, timeStep, nIter, 1, 0.2, 4, 0.007, 3.3148);
+% eedfinal(u, timeStep, nIter, verbose, sigma, m, km, cm)
