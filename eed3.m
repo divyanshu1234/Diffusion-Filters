@@ -45,7 +45,6 @@ for iter = 1:nIter
             v2 = guSigmaPerp / norm(guSigma);
             
             s = norm(guSigma)^2;
-%             lamb1 = 1 - exp(-3.3148 ./ (s/0.007).^4);
             lamb1 = 1 - exp(-cm ./ (s/km).^m);
             lamb2 = 1;
             

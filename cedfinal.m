@@ -27,35 +27,34 @@ kRho = kRho / sum(kRho(:));
 
 for iter = 1:nIter
     
-    [guxList, guyList] = gradient(u);
-    
 %   Sigma of Gradient
-    guSigmaX = imfilter(guxList, kSigma, 'same', 'replicate');
-    guSigmaY = imfilter(guyList, kSigma, 'same', 'replicate');
+    guSigmaX = gD(u, sigma, 1, 0);
+    guSigmaY = gD(u, sigma, 0, 1);
 
     JRhoXX = imfilter(guSigmaX.^2, kRho, 'same', 'replicate');
     JRhoYY = imfilter(guSigmaY.^2, kRho, 'same', 'replicate');
     JRhoXY = imfilter(guSigmaX.*guSigmaY, kRho, 'same', 'replicate');    
-
-    J = zeros(nRows, nCols, 2);
-
+    
+    Dxx = zeros(nRows, nCols);
+    Dxy = zeros(nRows, nCols);
+    Dyy = zeros(nRows, nCols);
+    
     for j = 1:nRows
         for k = 1:nCols                        
             JRho = [JRhoXX(j,k), JRhoXY(j,k); JRhoXY(j,k), JRhoYY(j,k)];
-            [v, mew] = eig(JRho);
+            [v, mu] = eig(JRho);
             lamb2 = alpha;
-            lamb1 = alpha + (1-alpha) * exp(-c / (mew(1,1)-mew(2,2))^(2*m));
+            lamb1 = alpha + (1-alpha) * exp(-c / (mu(1,1)-mu(2,2))^(2*m));
             
             D = v * diag([lamb1, lamb2]) * v';
-            gu = [guxList(j,k); guyList(j,k)];
-
-            tempJ = D * gu;
-            J(j,k,1) = tempJ(1);
-            J(j,k,2) = tempJ(2);
+            
+            Dxx(j,k) = D(1,1);
+            Dxy(j,k) = D(1,2);
+            Dyy(j,k) = D(2,2);
         end
     end
 
-    divJ = divergence(J(:,:,1), J(:,:,2));
+    divJ = tnldStep(u, Dxx, Dxy, Dyy, 1);
     u = u + timeStep * divJ;
     
     if verbose
